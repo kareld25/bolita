@@ -1,7 +1,4 @@
 {
-  "name": "bolita-analisis-fl",
-  "version": "1.0.0",
-  "main": "api/index.js",
   "dependencies": {
     "axios": "^1.6.0",
     "csv-parser": "^3.0.0"
