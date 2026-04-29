@@ -3,50 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bolita Florida Web</title>
+    <title>Bolita Florida - Análisis Real</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .app { width: 100%; max-width: 400px; background: #1e293b; border-radius: 20px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .header { text-align: center; border-bottom: 2px solid #fbbf24; padding-bottom: 15px; margin-bottom: 20px; }
-        .btn { background: #fbbf24; color: black; width: 100%; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .row { display: flex; justify-content: space-between; align-items: center; background: #334155; margin: 10px 0; padding: 15px; border-radius: 12px; }
-        .ball { background: #3b82f6; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .app { width: 100%; max-width: 450px; background: #1e293b; border-radius: 20px; padding: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .header { text-align: center; border-bottom: 2px solid #fbbf24; padding-bottom: 15px; margin-bottom: 25px; }
+        .btn { background: #fbbf24; color: #000; width: 100%; border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+        .btn:hover { background: #d97706; transform: translateY(-2px); }
+        .row { display: flex; justify-content: space-between; align-items: center; background: #334155; margin: 12px 0; padding: 18px; border-radius: 15px; border-left: 4px solid #3b82f6; }
+        .ball { background: #3b82f6; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .info { text-align: right; }
-        .loader { text-align: center; display: none; color: #fbbf24; }
+        .apariciones { font-weight: bold; color: #fbbf24; font-size: 1.1rem; }
+        .loader { text-align: center; display: none; color: #fbbf24; margin: 20px 0; }
     </style>
 </head>
 <body>
     <div class="app">
         <div class="header">
             <h2 style="margin:0">BOLITA DATA PRO</h2>
-            <small>Filtro: Tarde (2012-2026)</small>
+            <p style="margin:5px 0 0; font-size:0.8rem; color:#94a3b8">Sorteos de la Tarde (Desde 2012)</p>
         </div>
-        <button class="btn" onclick="consultar()">ACTUALIZAR DESDE LA WEB</button>
-        <div id="loader" class="loader"><p>Nutriendo datos oficiales...</p></div>
+        
+        <button class="btn" onclick="consultar()">ACTUALIZAR Y ANALIZAR</button>
+        
+        <div id="loader" class="loader">🔄 Conectando con Florida Lottery...</div>
         <div id="results"></div>
     </div>
 
     <script>
         async function consultar() {
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('results').innerHTML = '';
+            const loader = document.getElementById('loader');
+            const results = document.getElementById('results');
+            loader.style.display = 'block';
+            results.innerHTML = '';
+
             try {
-                const res = await fetch('/api');
+                // Vercel rutea automáticamente las carpetas /api
+                const res = await fetch('/api'); 
+                if (!res.ok) throw new Error();
                 const data = await res.json();
-                const container = document.getElementById('results');
                 
                 data.forEach((item, i) => {
-                    container.innerHTML += `
+                    results.innerHTML += `
                         <div class="row">
                             <div class="ball">${item.numero}</div>
                             <div class="info">
-                                <div style="font-size:0.7em; color:#94a3b8">${i === 0 ? 'MÁS REPETIDO' : (i+1)+'° LUGAR'}</div>
-                                <div style="font-weight:bold; color:#fbbf24">${item.apariciones} veces</div>
+                                <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:4px;">
+                                    ${i === 0 ? '🏆 EL MÁS REPETIDO' : (i+1)+'° LUGAR'}
+                                </div>
+                                <div class="apariciones">${item.apariciones} veces</div>
                             </div>
                         </div>`;
                 });
-            } catch (e) { alert("Error al conectar"); }
-            document.getElementById('loader').style.display = 'none';
+            } catch (e) {
+                results.innerHTML = `<p style="color:#ef4444; text-align:center;">Error al obtener datos. Revisa la consola de Vercel.</p>`;
+            } finally {
+                loader.style.display = 'none';
+            }
         }
     </script>
 </body>
